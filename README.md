@@ -66,4 +66,3 @@ This README was generated with assistance from an AI. The content and structure 
 
 No licenses, no rules, no mercy. Use responsibly—or don’t.  
 
-YOOO
