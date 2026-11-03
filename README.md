@@ -1,4 +1,3 @@
-
 # GitHell  
 
 **Welcome to the Abyss**—a realm where fairness is an illusion and auto-commits rule the shadows. GitHell is not here to play nice; it’s here to expose the exploiters of GitHub's metrics.  
@@ -15,7 +14,7 @@ GitHell is designed to counteract the auto-commit phenomenon with equal parts ir
 
 ## 🕹️ **Workflow Overview**  
 
-- **Frequent Commits**: The workflow generates commits every 5 minutes or on demand.  
+- **Frequent Commits**: The workflow generates one commit every hour or on demand.  
 - **Execution Tracker**: Each run updates a file documenting:
   - Total Commits  
   - Execution Count  
@@ -64,5 +63,4 @@ This README was generated with assistance from an AI. The content and structure 
 
 ## 🛡️ **License**  
 
-No licenses, no rules, no mercy. Use responsibly—or don’t.  
-
+No licenses, no rules, no mercy. Use responsibly—or don’t.
