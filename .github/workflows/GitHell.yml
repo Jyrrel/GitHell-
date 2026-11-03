@@ -2,7 +2,7 @@ name: GitHell
 
 on:
   schedule:
-    - cron: '0 * * * *'   # hourly; each run decides how many commits to make
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -13,9 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0   # needed to count today's commits
+      - uses: actions/checkout@v2
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -52,60 +50,27 @@ jobs:
           git config user.email "jyrrel789@gmail.com"
           current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-          MAX_PER_DAY=20
-          export TZ=UTC   # set to your timezone so "a day" matches your contribution graph
+          commit_id=$(cat /proc/sys/kernel/random/uuid)
+          total_commits=$(git rev-list --count HEAD)
 
-          # Random daily target (0..MAX_PER_DAY), stable for the whole day
-          seed=$(date +%Y%m%d | cksum | cut -d' ' -f1)
-          target=$(( seed % (MAX_PER_DAY + 1) ))
+          echo "  ________.__  __     ___ ___         .__  .__   " > abyss/README.yml
+          echo " /  _____/|__|/  |_  /   |   \\   ____ |  | |  |  " >> abyss/README.yml
+          echo "/   \\  ___|  \\   __\\/    ~    \\_/ __ \\|  | |  |  " >> abyss/README.yml
+          echo "\\    \\_\\  \\  ||  |  \\    Y    /\\  ___/|  |_|  |__" >> abyss/README.yml
+          echo " \\______  /__||__|   \\___|_  /  \\___  >____/____/ " >> abyss/README.yml
+          echo "        \\/                 \\/       \\/            " >> abyss/README.yml
+          echo "----------------------------------------------------" >> abyss/README.yml
+          echo "The abyss grows deeper with each commit." >> abyss/README.yml
+          echo "----------------------------------------------------" >> abyss/README.yml
+          echo "Commit ID: $commit_id" >> abyss/README.yml
+          echo "Commit: $total_commits" >> abyss/README.yml
+          echo "Execution Count: ${{ env.execution_count }}" >> abyss/README.yml
+          echo "Last Execution Time: $current_time" >> abyss/README.yml
+          echo "----------------------------------------------------" >> abyss/README.yml
 
-          # Commits already made today by this workflow
-          done_today=$(git log --since=midnight --grep="The abyss has no bottom" --oneline | wc -l)
-          remaining=$(( target - done_today ))
-          [ $remaining -gt $(( MAX_PER_DAY - done_today )) ] && remaining=$(( MAX_PER_DAY - done_today ))
-
-          if [ $remaining -le 0 ]; then
-            echo "Daily target ($target) reached ($done_today done). Nothing to do."
-            exit 0
-          fi
-
-          # Spread the remaining commits randomly across the rest of the day
-          hours_left=$(( 24 - 10#$(date +%H) ))
-          if [ $hours_left -le 1 ]; then
-            to_make=$remaining
-          else
-            per_hour=$(( (remaining + hours_left - 1) / hours_left ))
-            upper=$(( per_hour * 2 ))
-            [ $upper -gt $remaining ] && upper=$remaining
-            to_make=$(( RANDOM % (upper + 1) ))
-          fi
-          echo "Target today: $target | done: $done_today | making now: $to_make"
-
-          count=0
-          while [ $count -lt $to_make ]; do
-            commit_id=$(cat /proc/sys/kernel/random/uuid)
-            total_commits=$(git rev-list --count HEAD)
-
-            echo "  ________.__  __     ___ ___         .__  .__   " > abyss/README.yml
-            echo " /  _____/|__|/  |_  /   |   \\   ____ |  | |  |  " >> abyss/README.yml
-            echo "/   \\  ___|  \\   __\\/    ~    \\_/ __ \\|  | |  |  " >> abyss/README.yml
-            echo "\\    \\_\\  \\  ||  |  \\    Y    /\\  ___/|  |_|  |__" >> abyss/README.yml
-            echo " \\______  /__||__|   \\___|_  /  \\___  >____/____/ " >> abyss/README.yml
-            echo "        \\/                 \\/       \\/            " >> abyss/README.yml
-            echo "----------------------------------------------------" >> abyss/README.yml
-            echo "The abyss grows deeper with each commit." >> abyss/README.yml
-            echo "----------------------------------------------------" >> abyss/README.yml
-            echo "Commit ID: $commit_id" >> abyss/README.yml
-            echo "Commit: $total_commits" >> abyss/README.yml
-            echo "Execution Count: ${{ env.execution_count }}" >> abyss/README.yml
-            echo "Last Execution Time: $current_time" >> abyss/README.yml
-            echo "----------------------------------------------------" >> abyss/README.yml
-
-            git add abyss/README.yml
-            git commit -S -m "🌑 The abyss has no bottom... (Total commits: $total_commits, Executions: ${{ env.execution_count }}, Last run: $current_time)"
-            count=$((count+1))
-          done
+          git add abyss/README.yml
+          git commit -S -m "🌑 The abyss has no bottom... (Total commits: $total_commits, Executions: ${{ env.execution_count }}, Last run: $current_time)"
           
-          if [ $count -gt 0 ]; then git push; fi
+          git push
         env:
           API_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
